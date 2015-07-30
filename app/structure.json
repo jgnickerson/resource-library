@@ -1,0 +1,38 @@
+[
+  {
+    "type": "folder",
+    "name": "static",
+    "path": "./static",
+    "children": [
+      {
+        "type": "folder",
+        "name": "files1",
+        "path": "./static/files1",
+        "children": [
+          {
+            "type": "file",
+            "name": "html1",
+            "path": "./static/files1/html1.html"
+          },
+          {
+            "type": "file",
+            "name": "html2",
+            "path": "./static/files1/html2.html"
+          }
+        ]
+      },
+      {
+        "type": "folder",
+        "name": "files2",
+        "path": "./static/files2",
+        "children": [
+          {
+            "type": "file",
+            "name": "html3",
+            "path": "./static/files2/html3.html"
+          }
+        ]
+      }
+    ]
+  }
+]

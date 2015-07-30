@@ -1,0 +1,6 @@
+<div>
+  <ul ng-repeat="folder in directory">
+    <lh>{{folder.name}}</lh>
+    <li ng-repeat="file in folder.children"><a href="#/docs{{file.path}}">{{file.name}}</a></li>
+  </ul>
+</div>
