@@ -5,7 +5,7 @@ angular.module 'resourceLibraryApp', ['ngAnimate', 'ngCookies', 'ngMessages', 'n
     templateUrl: 'views/landing.html'
     controller: 'LandingController'
     controllerAs: 'landing'
-  .when '/docs/:filePath*',
+  .when '/static/:filePath*',
     templateUrl: 'views/doc.html'
     controller: 'DocController'
     controllerAs: 'doc'

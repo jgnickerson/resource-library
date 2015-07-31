@@ -1,4 +1,4 @@
-angular.module('resourceLibraryApp').service('directoryService', [->
+angular.module('resourceLibraryApp').service('directoryService', ['$http', ($http) ->
   service = {}
 
   directoryStructure =
@@ -18,6 +18,23 @@ angular.module('resourceLibraryApp').service('directoryService', [->
             'name': 'html2'
             'path': '/files1/html2.html'
           }
+          {
+            'type': 'folder'
+            'name': 'files4'
+            'path': '/files1/files4'
+            'children': [
+              {
+                'type': 'file'
+                'name': 'html5'
+                'path': '/files1/files4/html5.html'
+              }
+              {
+                'type': 'file'
+                'name': 'html6'
+                'path': '/files1/files4/html6.html'
+              }
+            ]
+          }
         ]
       }
       {
@@ -26,14 +43,19 @@ angular.module('resourceLibraryApp').service('directoryService', [->
         'path': '/files2'
         'children': [
           {
+            'type': 'file'
+            'name': 'html3'
+            'path': '/files2/html3.html'
+          }
+          {
             'type': 'folder'
             'name': 'files3'
             'path': '/files2/files3'
             'children': [
               {
                 'type': 'file'
-                'name': 'html3'
-                'path': '/files2/files3/html3.html'
+                'name': 'html4'
+                'path': '/files2/files3/html4.html'
               }
             ]
           }
@@ -42,8 +64,8 @@ angular.module('resourceLibraryApp').service('directoryService', [->
     ]
 
 
-
-  service.getStructure = -> directoryStructure
+  service.getStructure = ->
+    $http.get('./structure.json').then((res) -> res.data.children)
 
   return service
 ])

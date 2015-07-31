@@ -3,7 +3,7 @@ angular.module('resourceLibraryApp').controller('DocController', ['$scope', '$ro
   filePath = $routeParams.filePath
   $scope.doc = null
 
-  $http.get("docs/#{filePath}").then((data)->
+  $http.get("static/#{filePath}").then((data)->
     $scope.doc = $sce.trustAsHtml(data.data)
   )
 ])
