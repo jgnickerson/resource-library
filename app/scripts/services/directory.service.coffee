@@ -1,8 +1,8 @@
-angular.module('resourceLibraryApp').service('directoryService', [ ->
+angular.module('resourceLibraryApp').service('directoryService', [->
   service = {}
 
   directoryStructure =
-    [
+  [
       {
         'type': 'folder'
         'name': 'files1'
@@ -24,13 +24,24 @@ angular.module('resourceLibraryApp').service('directoryService', [ ->
         'type': 'folder'
         'name': 'files2'
         'path': '/files2'
-        'children': [{
-          'type': 'file'
-          'name': 'html3'
-          'path': '/files2/html3.html'
-        }]
+        'children': [
+          {
+            'type': 'folder'
+            'name': 'files3'
+            'path': '/files2/files3'
+            'children': [
+              {
+                'type': 'file'
+                'name': 'html3'
+                'path': '/files2/files3/html3.html'
+              }
+            ]
+          }
+        ]
       }
     ]
+
+
 
   service.getStructure = -> directoryStructure
 
