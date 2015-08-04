@@ -4,51 +4,82 @@ angular.module('resourceLibraryApp').directive('nav', ['directoryService', '$com
   scope: {}
 
   controller: ['$scope', ($scope) ->
+  #Why do we want a controller here, instead of just putting these functions in link?
     $scope.toggle = (jurisdiction, override = null) ->
-      if override?
-        $scope.showing[jurisdiction] = override
-      else
-        $scope.showing[jurisdiction] = !$scope.showing[jurisdiction]
+      $scope.showing[jurisdiction] = if override? then override else !$scope.showing[jurisdiction]
 
     $scope.isShown = (jurisdiction) ->
       $scope.showing[jurisdiction]
 
-    $scope.toggleAll = ->
-      _.forEach(_.keys($scope.showing), (jurisdiction) -> $scope.toggle(jurisdiction))
+    $scope.someAreShown = ->
+      _.some(_.keys($scope.showing), (jurisdiction) -> $scope.isShown(jurisdiction))
+
+    $scope.someAreHidden = ->
+      _.some(_.keys($scope.showing), (jurisdiction) -> !$scope.isShown(jurisdiction))
+
+    $scope.expandAll = ->
+      _.forEach(_.keys($scope.showing), (jurisdiction) -> $scope.toggle(jurisdiction, true))
+
+    $scope.collapseAll = ->
+    #forEach exits on "explicit false return", so must add empty return
+      _.forEach(_.keys($scope.showing), (jurisdiction) ->
+        $scope.toggle(jurisdiction, false)
+        return
+      )
   ]
 
   link: (scope, element) ->
     scope.nav = null
     scope.showing = {}
 
-    navHtmlStrArry = []
-    navHtmlStr = ""
+    htmlStrArray = []
+    navHtml = ""
 
     directoryRecursion = (dirObj, jurisdiction = null) ->
-      for f in dirObj
-        if f != null
-          if f.type is "file"
-            fileName = f.shortName
-            scope[fileName] = f
-            html = """<li ng-show="isShown('#{jurisdiction}')"><a ng-href='#/{{#{fileName}.path}}'>{{#{fileName}.countryName}}</a></li>"""
-            navHtmlStrArry.push(html)
-          else
-            scope[f.name] = f
-            html = "<ul>"
-            html1 = """<lh>{{#{f.name}.name}}<a ng-hide="isShown('#{f.name}')" ng-click="toggle('#{f.name}')">Show</a><a ng-show="isShown('#{f.name}')" ng-click="toggle('#{f.name}')">Hide</a></lh>"""
-            navHtmlStrArry.push(html)
-            navHtmlStrArry.push(html1)
+      dirObj.forEach((f)->
+        if f.type is "file"
+          fileName = f.shortName
+          scope[fileName] = f
+          html = """<li ng-show="isShown('#{jurisdiction}')">
+                     <a ng-href='#/{{#{fileName}.path}}'>{{#{fileName}.countryName}}</a>
+                     </li>
+                 """
+          htmlStrArray.push(html)
 
-            directoryRecursion(f.children, "#{f.name}")
-            html3 = "</ul>"
-            navHtmlStrArry.push(html3)
+        else #f is a dir
+          scope[f.name] = f
 
+          scope.showing[f.shortName] = false #expand/collapseAll must have keys to iterate over
+                                             #NOTE: this is going to cause problems for nested folders
+                                             #and for showing/hiding persistence across routes (if we can do this)
+          html = "<ul>"
+          html1 = """<lh><a ng-hide="isShown('#{f.name}')" ng-click="toggle('#{f.name}', true)">{{#{f.name}.name}} +</a>
+                     <a ng-show="isShown('#{f.name}')" ng-click="toggle('#{f.name}', false)">{{#{f.name}.name}} -</a>
+                     </lh>
+                    """
+
+          htmlStrArray.push(html)
+          htmlStrArray.push(html1)
+
+          directoryRecursion(f.children, "#{f.name}")
+
+          html2 = "</ul>"
+          htmlStrArray.push(html2)
+      )
+
+    prepareHtmlString = ->
+      htmlStrArray.forEach((str) ->
+        navHtml += str
+      )
+      toggleAllHtml = """<h6><a ng-show="someAreHidden()" ng-click="expandAll()">Expand All</a> -
+                         <a ng-show="someAreShown()" ng-click="collapseAll()">Collapse All</a></h6>
+                      """
+      navHtml = toggleAllHtml + navHtml
 
     directoryService.getStructure().then((dir)->
       directoryRecursion(dir)
-      for string in navHtmlStrArry
-        navHtmlStr += string
-      element.html('<h5 ng-click="toggleAll()">Expand</h5>' + navHtmlStr)
+      prepareHtmlString()
+      element.html(navHtml)
       $compile(element.contents())(scope)
     )
   }

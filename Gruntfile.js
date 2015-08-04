@@ -427,9 +427,34 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.coffee',
         singleRun: true
       }
+    },
+    markdown: {
+      all: {
+        files: [
+          {
+            expand: true,
+            src: './src/**/*.md',
+            dest: './.tmp/',
+            ext: '.html'
+          }
+        ],
+        options: {
+          markdownOptions: {
+            gfm: false
+          }
+        }
+      }
+    },
+    dir2json: {
+      files: {
+        src:'./.tmp/src',
+        dest: './.tmp/structure.json'
+      }
     }
   });
 
+  //grunt.loadNpmTasks('grunt-markdown');
+  grunt.loadTasks('tasks'); //couldn't get grunt-jit to work with this
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {
@@ -439,6 +464,8 @@ module.exports = function (grunt) {
     grunt.task.run([
       'clean:server',
       'wiredep',
+      'markdown:all',
+      'dir2json',
       'concurrent:server',
       'autoprefixer:server',
       'connect:livereload',
