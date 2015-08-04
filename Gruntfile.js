@@ -428,6 +428,8 @@ module.exports = function (grunt) {
         singleRun: true
       }
     },
+
+
     markdown: {
       all: {
         files: [
@@ -453,7 +455,6 @@ module.exports = function (grunt) {
     }
   });
 
-  //grunt.loadNpmTasks('grunt-markdown');
   grunt.loadTasks('tasks'); //couldn't get grunt-jit to work with this
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {

@@ -5,6 +5,8 @@ angular.module('resourceLibraryApp').directive('nav', ['directoryService', '$com
 
   controller: ['$scope', ($scope) ->
   #Why do we want a controller here, instead of just putting these functions in link?
+    $scope.showing = {}
+
     $scope.toggle = (jurisdiction, override = null) ->
       $scope.showing[jurisdiction] = if override? then override else !$scope.showing[jurisdiction]
 
@@ -30,8 +32,6 @@ angular.module('resourceLibraryApp').directive('nav', ['directoryService', '$com
 
   link: (scope, element) ->
     scope.nav = null
-    scope.showing = {}
-
     htmlStrArray = []
     navHtml = ""
 
